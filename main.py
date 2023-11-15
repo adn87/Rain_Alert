@@ -1,20 +1,27 @@
 import requests
 
 
-
 api_key = "997ad037d80540468b7d78af67b5a659"
-# api_key2 = "f1fe3508cdc2fe6512875d3f8f70e37b"
-MY_LONG = 45.079163
-MY_LAT = 23.885942
+MY_LONG = -75.697189
+MY_LAT = 45.421532
 parameters = {
     "lat": MY_LAT,
     "lon": MY_LONG,
     "appid": api_key
 }
 
-response = requests.get("https://api.openweathermap.org/data/2.5/weather", params=parameters)
+response = requests.get("https://api.openweathermap.org/data/2.5/forecast", params=parameters)
 response.raise_for_status()
-data = response.json()
-print(data)
+weather_data = response.json()
+# weather_data["list"][0]["weather"][0]["id"]
+weather_slice = weather_data["list"][:12]
 
-# https://api.openweathermap.org/data/3.0/onecall?lat=24.71&lon=46.68&appid=f1fe3508cdc2fe6512875d3f8f70e37b
+will_rain = False
+for hour_data in weather_slice:
+    condition_code = int(hour_data["weather"][0]["id"])
+    if condition_code < 700:
+        will_rain = True
+
+if will_rain:
+    print("Bring an Umbrella")
+# print(weather_slice)
